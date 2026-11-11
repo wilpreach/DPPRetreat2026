@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Province-Wide Retreat 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#16130f; --paper:#faf6ee; --cream:#f3ead6; --line:#e2d7bf;
+    --muted:#6f6656; --accent:#9b1c1c; --blue:#1f4e8c; --now:#fff3c4;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .serif{font-family:"Cormorant Garamond",Georgia,serif}
+  header{background:var(--ink);color:#fff;padding:36px 20px 28px;text-align:center}
+  header .kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+  header h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clamp(34px,8vw,56px);line-height:1.05;margin:10px 0 12px;letter-spacing:.02em}
+  header .meta{font-size:15px;opacity:.9}
+  header .meta b{font-weight:600}
+  blockquote{max-width:560px;margin:20px auto 0;font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:18px;opacity:.85;line-height:1.4}
+  blockquote cite{display:block;font-style:normal;font-family:Inter,sans-serif;font-size:12px;letter-spacing:.12em;margin-top:6px;opacity:.7}
+
+  nav.days{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:10px 12px;scrollbar-width:none}
+  nav.days::-webkit-scrollbar{display:none}
+  nav.days a{flex:1 0 auto;min-width:56px;text-align:center;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:6px 10px;background:#fff}
+  nav.days a .d{display:block;font-size:20px;font-weight:700;line-height:1.1}
+  nav.days a .w{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+  nav.days a[aria-current="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  nav.days a[aria-current="true"] .w{color:#d8cfbd}
+  nav.days a .today{display:block;font-size:9px;letter-spacing:.1em;color:var(--accent);font-weight:700}
+  nav.days a[aria-current="true"] .today{color:#ffb4b4}
+
+  main{max-width:720px;margin:0 auto;padding:20px 16px 40px}
+  .pb-btn{display:inline-block;margin-top:18px;background:#d4af37;color:#16130f;font-weight:700;font-size:15px;text-decoration:none;border-radius:999px;padding:10px 20px}
+  .pray{display:inline-block;margin-left:8px;font-size:12px;font-weight:700;color:#7a5b00;background:#fbefc4;border:1px solid #e6cf7a;border-radius:999px;padding:1px 9px;text-decoration:none;vertical-align:2px;white-space:nowrap}
+  .hp-card.now .pray{background:#d4af37;color:#16130f;border-color:#d4af37}
+  .happening{max-width:720px;margin:0 auto;padding:22px 16px 18px}
+  .happening h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:28px;margin:0}
+  .happening .clock{font-size:13px;color:var(--muted);margin:2px 0 14px}
+  .hp-grid{display:grid;gap:10px}
+  .hp-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px}
+  .hp-card.now{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .hp-card .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--muted)}
+  .hp-card.now .lbl{color:#ffb4b4}
+  .hp-card .big{font-size:20px;font-weight:700;line-height:1.3;margin-top:4px}
+  .hp-card .sub{font-size:14px;color:var(--muted);margin-top:2px}
+  .hp-card.now .sub{color:#d8cfbd}
+  .hp-card .it{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:18px;line-height:1.3;margin-top:4px}
+  .hp-card .venue{color:inherit;border-color:currentColor;opacity:.75}
+  .hp-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:420px){.hp-two{grid-template-columns:1fr}}
+  .hp-link{display:inline-block;margin-top:12px;font-size:14px;font-weight:600;color:var(--accent);text-decoration:none}
+  .now-banner{display:none;background:var(--ink);color:#fff;border-radius:14px;padding:14px 16px;margin-bottom:18px}
+  .now-banner.show{display:block}
+  .now-banner .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+  .now-banner .row{display:flex;justify-content:space-between;gap:12px;margin-top:4px}
+  .now-banner .row div{flex:1}
+  .now-banner .t{font-weight:700}
+
+  .daycard{background:var(--cream);border:1px solid var(--line);border-radius:18px;padding:20px 18px;margin-bottom:16px}
+  .daylabel{font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+  .daylabel.special{color:var(--accent)}
+  .date{font-size:14px;color:var(--muted);margin-top:2px}
+  .charge{margin-top:14px}
+  .small-lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .charge .names{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:22px;line-height:1.25;margin-top:2px}
+  .speaker{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+  .speaker .who{font-family:"Cormorant Garamond",Georgia,serif;font-size:21px;font-weight:600;line-height:1.25;margin-top:2px}
+  .speaker .org{font-size:14px;color:var(--muted)}
+  .speaker .topic{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:19px;line-height:1.35;margin-top:10px}
+
+  .sched{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+  .half{padding:6px 0}
+  .half + .half{border-top:1px solid var(--line)}
+  .half h3{margin:10px 18px 4px;font-size:13px;letter-spacing:.14em}
+  .half.am h3{color:var(--accent)}
+  .half.pm h3{color:var(--blue)}
+  .item{display:flex;gap:14px;padding:10px 18px;align-items:baseline}
+  .item .time{font-weight:700;min-width:54px;font-variant-numeric:tabular-nums}
+  .item .what{flex:1}
+  .item.key .what{font-weight:700}
+  .item .flag{color:var(--accent);font-weight:500}
+  .venue{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.05em;border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-left:6px;color:var(--muted);vertical-align:2px}
+  .item.past{opacity:.45}
+  .item.current{background:var(--now)}
+  .item.current .time::after{content:" • now";color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.06em}
+  .homeward{padding:10px 18px 16px;color:var(--accent);font-weight:700}
+
+  section.info{max-width:720px;margin:0 auto;padding:0 16px 40px}
+  section.info h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:28px;margin:28px 0 10px}
+  .legend{display:flex;flex-wrap:wrap;gap:8px}
+  .legend span{background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:14px}
+  .legend b{margin-right:4px}
+  ul.notes{padding-left:20px;margin:0}
+  ul.notes li{margin:8px 0}
+  ul.notes ul{padding-left:18px;margin:6px 0}
+  ul.notes ul li{margin:4px 0;color:#3a342b}
+  .overview{display:grid;gap:10px}
+  .ov{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit}
+  .ov .n{font-weight:700;font-size:22px;min-width:34px}
+  .ov .s{font-size:14px;color:var(--muted)}
+  .ov .tp{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:17px;line-height:1.3}
+  footer{text-align:center;font-size:12px;color:var(--muted);padding:20px 16px 40px}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">Retreat Guide</div>
+  <h1>Province-Wide Retreat</h1>
+  <div class="meta"><b>November 23–28, 2026</b> · Monday to Saturday<br>Saint Paul Center for Renewal, Alfonso, Cavite</div>
+  <a class="pb-btn" href="https://wilpreach.github.io/DPPRetreat2026/">🕯️ Open the Prayer Book</a>
+  <blockquote>“All the brothers should make a retreat for six full days each year, meditating on the word of God in their hearts and praying more intensely.”<cite>LCO 68</cite></blockquote>
+</header>
+
+<section class="happening" aria-live="polite">
+  <h2>What’s Happening Now</h2>
+  <div class="clock" id="hpClock"></div>
+  <div id="hpBody"></div>
+</section>
+
+<nav class="days" id="tabs" aria-label="Retreat days"></nav>
+
+<main>
+  <div id="day"></div>
+</main>
+
+<section class="info">
+  <h2>The Week at a Glance</h2>
+  <div class="overview" id="overview"></div>
+
+  <h2>Prayer Book</h2>
+  <a class="ov" href="https://wilpreach.github.io/DPPRetreat2026/"><span class="n">🕯️</span><span><div class="tp">Retreat Prayer Book</div>
+    <div class="s">Liturgy of the Hours for each retreat day: Invitatory, Office of Readings, Lauds, Vespers and more. It opens on today’s prayers.</div></span></a>
+
+  <h2>Venues</h2>
+  <div class="legend">
+    <span><b>SH</b>Session Hall</span>
+    <span><b>C</b>Chapel</span>
+    <span><b>R</b>Refectory</span>
+  </div>
+
+  <h2>Notes</h2>
+  <ul class="notes">
+    <li>The convent(s) in charge of the day shall:
+      <ul>
+        <li>Organize the liturgy: lead the Liturgy of the Hours (including Exposition and the Holy Rosary).</li>
+        <li>Introduce the resource speaker(s).</li>
+        <li>Moderate the sessions and open forum (if any).</li>
+        <li>Deliver the word of thanks (including tokens).</li>
+      </ul>
+    </li>
+    <li>The Studentate Liturgical Committee (SLC) takes charge of the liturgical materials and vestments.</li>
+    <li>Sacramental Confession is encouraged among the brothers.</li>
+    <li>Two UST buses will be available at Santo Domingo Church for brothers coming from abroad and from non-Luzon communities.</li>
+    <li>Do not forget your medicines.</li>
+    <li>Update your iBreviary app.</li>
+  </ul>
+</section>
+
+<footer>Province-Wide Retreat 2026 · Saint Paul Center for Renewal, Alfonso, Cavite</footer>
+
+<script>
+const DAYS = [
+  { n:23, wd:"Monday", label:"Opening Day", special:true,
+    charge:"Bahay Dominiko and Saint Dominic’s House",
+    speaker:{who:"Abbot Dom Austin P. Cadiz, OSB", org:"Our Lady of Montserrat Abbey",
+      topic:"Contemplare et Contemplata Aliis Tradere: The Contemplative Foundation of Synodal Spirituality"},
+    am:[["10:00","Arrival / Registration",0,null],["12:00","Lunch",0,null]],
+    pm:[["14:45","Holy Rosary",0,"SH"],["15:00","Welcome Remarks and Retreat Overview",0,"SH"],["15:30","Session",1,"SH"],
+        ["16:30","Snacks",0,"R"],["18:00","Holy Mass with Vespers",0,"C"],["19:00","Dinner",0,null]] },
+  { n:24, wd:"Tuesday", label:"Second Day",
+    charge:"Santo Domingo and Our Lady of the Rosary",
+    speaker:{who:"Archbishop Gilbert A. Garcera, DD", org:"Archdiocese of Lipa / CBCP President",
+      topic:"“Cura Animae” in a Synodal Church: Pastoring with and for the People"},
+    am:[["06:30","Breakfast",0,"R"],["08:45","OR and Lauds",0,"SH"],["09:30","Session",1,"SH"],["10:30","Snacks",0,"R"],["11:00","Holy Mass",1,"C"],["12:00","Lunch",0,"R"]],
+    pm:[["15:00","Personal Time",0,null],["16:30","Snacks",0,null],["18:00","Holy Hour, Holy Rosary, and Vespers",0,null],["19:00","Dinner",0,null]] },
+  { n:25, wd:"Wednesday", label:"Third Day",
+    charge:"Saint Thomas Aquinas and Saint Raymund of Peñafort",
+    speaker:{who:"Bishop Marcelino M. Maralit Jr., DD", org:"Diocese of San Pablo",
+      topic:"The Pulpit and the Pew: The Preacher as the Soul of Synodal Listening"},
+    am:[["06:30","Breakfast",0,null],["08:45","OR and Lauds",0,null],["09:30","Session",1,null,"in habit"],["10:30","Holy Mass",1,null],["12:00","Lunch",0,null]],
+    pm:[["15:00","Personal Time",0,null],["16:30","Snacks",0,null],["18:00","Holy Hour, Holy Rosary, and Vespers",0,null],["19:00","Dinner",0,null]] },
+  { n:26, wd:"Thursday", label:"Fourth Day",
+    charge:"Saint John Lateran, San Lorenzo Ruiz and Most Holy Rosary",
+    speaker:{who:"Br. Marcelino E. Saria, OP and Br. Paul Raegan O. Talavera, OP", org:"",
+      topic:"The Synodal Dominican in the World: Concrete Commitments for Mission"},
+    am:[["06:30","Breakfast",0,null],["08:45","OR and Lauds",0,null],["09:30","Session",1,null],["10:30","Snacks",0,null],["11:00","Holy Mass",1,null],["12:00","Lunch",0,null]],
+    pm:[["15:00","Personal Time",0,null],["16:30","Snacks",0,null],["18:00","Holy Hour, Holy Rosary, and Vespers",0,null],["19:00","Dinner",0,null]] },
+  { n:27, wd:"Friday", label:"Fifth Day",
+    charge:"Saint Albert the Great and Saint Mary Magdalene",
+    speaker:{who:"Archbishop Midyphil B. Billones, DD", org:"Archdiocese of Jaro",
+      topic:"Veritas in a Synodal Key: The Church’s Intellectual Tradition as a Service to Discernment"},
+    am:[["06:30","Breakfast",0,null],["08:45","OR and Lauds",0,null],["09:30","Session",1,null],["10:30","Snacks",0,null],["11:00","Holy Mass",1,null],["12:00","Lunch",0,null]],
+    pm:[["15:00","Personal Time",0,null],["16:00","Snacks",0,null],["17:00","Holy Hour, Holy Rosary, and Vespers",0,null],["18:00","Dinner",0,null],["19:00","Socials",1,null]] },
+  { n:28, wd:"Saturday", label:"Closing Day", special:true,
+    charge:"Biara Santo Dominikus and Biara Santo Tomas Aquino",
+    speaker:null,
+    am:[["06:30","Breakfast",0,null],["08:45","OR and Lauds",0,null],["09:30","Group Discussion",1,null],["10:30","Snacks",0,null],["11:00","Closing Mass",1,null,"with Apostolic Blessing"],["12:00","Lunch",0,null]],
+    pm:[], homeward:"Convent-Sweet-Convent" }
+];
+
+const PRAYER_BOOK = "https://wilpreach.github.io/DPPRetreat2026/";
+const isOffice = w => /lauds|vespers/i.test(w);
+const prayLink = w => isOffice(w) ? `<a class="pray" href="${PRAYER_BOOK}">🕯️ Pray ${/lauds/i.test(w)?"Lauds":"Vespers"}</a>` : "";
+const $ = s => document.querySelector(s);
+const fmt = t => { let [h,m]=t.split(":").map(Number); const ap=h>=12?"PM":"AM"; h=h%12||12; return h+":"+String(m).padStart(2,"0"); };
+const mins = t => { const [h,m]=t.split(":").map(Number); return h*60+m; };
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function manilaNow(){
+  const p = new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Manila",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+  const g = k => p.find(x=>x.type===k).value;
+  return {y:+g("year"), mo:+g("month"), d:+g("day"), m: +g("hour")*60 + +g("minute")};
+}
+function todayDay(){ const n=manilaNow(); return (n.y===2026&&n.mo===11&&n.d>=23&&n.d<=28)?n.d:null; }
+
+function renderTabs(cur){
+  const today = todayDay();
+  $("#tabs").innerHTML = DAYS.map(d=>`<a href="#day-${d.n}" aria-current="${d.n===cur}">
+    <span class="w">${d.wd.slice(0,3)}</span><span class="d">${d.n}</span>${d.n===today?'<span class="today">TODAY</span>':''}</a>`).join("");
+}
+
+function itemsHTML(list, dayN){
+  return list.map(([t,w,key,v,flag])=>`<div class="item${key?' key':''}" data-t="${t}" data-day="${dayN}">
+    <span class="time">${fmt(t)}</span>
+    <span class="what">${esc(w)}${flag?` <span class="flag">${esc(flag)}</span>`:''}${v?`<span class="venue">${v}</span>`:''}${prayLink(w)}</span></div>`).join("");
+}
+
+function renderDay(n){
+  const d = DAYS.find(x=>x.n===n) || DAYS[0];
+  const sp = d.speaker ? `<div class="speaker">
+      <div class="small-lbl">Resource Speaker${d.speaker.who.includes(" and ")?"s":""}</div>
+      <div class="who">${esc(d.speaker.who)}</div>${d.speaker.org?`<div class="org">${esc(d.speaker.org)}</div>`:""}
+      <div class="topic">“${esc(d.speaker.topic.replace(/^“|”$/g,""))}”</div></div>` : "";
+  $("#day").innerHTML = `
+    <div class="daycard">
+      <div class="daylabel${d.special?' special':''}">${d.label}</div>
+      <div class="date">${d.wd}, November ${d.n}, 2026</div>
+      <div class="charge"><div class="small-lbl">Convents in charge</div><div class="names">${esc(d.charge)}</div></div>
+      ${sp}
+    </div>
+    <div class="sched">
+      <div class="half am"><h3>AM</h3>${itemsHTML(d.am,d.n)}</div>
+      <div class="half pm"><h3>PM</h3>${itemsHTML(d.pm,d.n)}${d.homeward?`<div class="homeward">${d.homeward}</div>`:""}</div>
+    </div>`;
+  renderTabs(d.n);
+  const t = document.querySelector(`#tabs a[href="#day-${d.n}"]`); if(t) t.scrollIntoView({inline:"center",block:"nearest"});
+  markNow();
+}
+
+const TIMELINE = DAYS.flatMap(d=>[...d.am,...d.pm].map(it=>({day:d, t:it[0], what:it[1], v:it[3], flag:it[4], k:d.n*1440+mins(it[0])})));
+const itemLine = x => `${esc(x.what)}${x.flag?` <span style="font-weight:500">${esc(x.flag)}</span>`:""}${x.v?`<span class="venue">${x.v}</span>`:""}${prayLink(x.what)}`;
+
+function renderHappening(){
+  const n = manilaNow();
+  const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const wd = days[new Date(Date.UTC(n.y,n.mo-1,n.d)).getUTCDay()];
+  const months=["January","February","March","April","May","June","July","August","September","October","November","December"];
+  $("#hpClock").textContent = `${wd}, ${months[n.mo-1]} ${n.d} · ${fmt(String(Math.floor(n.m/60)).padStart(2,"0")+":"+String(n.m%60).padStart(2,"0"))} ${n.m>=720?"PM":"AM"} (Manila time)`;
+
+  const nowDate = Date.UTC(n.y,n.mo-1,n.d), start = Date.UTC(2026,10,23), end = Date.UTC(2026,10,28);
+  let html = "";
+  if(nowDate < start){
+    const left = Math.round((start-nowDate)/86400000);
+    const f = TIMELINE[0];
+    html = `<div class="hp-grid">
+      <div class="hp-card now"><div class="lbl">Retreat begins in</div><div class="big">${left} day${left===1?"":"s"}</div>
+        <div class="sub">Monday, November 23 · Saint Paul Center for Renewal, Alfonso, Cavite</div></div>
+      <div class="hp-card"><div class="lbl">First on the schedule</div><div class="big">${fmt(f.t)} AM · ${itemLine(f)}</div>
+        <div class="sub">Opening Day, led by ${esc(DAYS[0].charge)}</div></div>
+      <div class="hp-card"><div class="lbl">Before you go</div><div class="sub" style="color:inherit">Pack your medicines and update your iBreviary app. Brothers from abroad and non-Luzon communities: the UST buses leave from Santo Domingo Church.</div></div>
+    </div><a class="hp-link" href="#day-23">See the Opening Day schedule →</a>`;
+  } else if(nowDate > end || (n.d===28 && n.m >= 13*60)){
+    html = `<div class="hp-card now"><div class="lbl">Retreat concluded</div><div class="big">Convent-Sweet-Convent</div>
+      <div class="sub">Thank you, brothers. Safe travels home.</div></div>`;
+  } else {
+    const nowK = n.d*1440 + n.m;
+    let ci = -1; TIMELINE.forEach((x,i)=>{ if(x.k<=nowK) ci=i; });
+    const cur = ci>=0 ? TIMELINE[ci] : null, nxt = TIMELINE[ci+1] || null;
+    const today = DAYS.find(x=>x.n===n.d);
+    const lastOfDay = cur && (!nxt || nxt.day.n!==cur.day.n);
+    const nowCard = (cur && cur.day.n===n.d && lastOfDay && n.m > mins(cur.t)+90)
+      ? `<div class="big">Evening rest</div><div class="sub">Today’s schedule is done</div>`
+      : (cur && cur.day.n===n.d)
+      ? `<div class="big">${itemLine(cur)}</div><div class="sub">since ${fmt(cur.t)} ${mins(cur.t)>=720?"PM":"AM"}</div>`
+      : `<div class="big">Rest and quiet</div><div class="sub">The day’s schedule hasn’t started yet</div>`;
+    const nextCard = nxt
+      ? `<div class="big">${fmt(nxt.t)} ${mins(nxt.t)>=720?"PM":"AM"} · ${itemLine(nxt)}</div><div class="sub">${nxt.day.n===n.d?"Today":nxt.day.wd+", Nov "+nxt.day.n}</div>`
+      : `<div class="big">${today.homeward||"Rest well"}</div>`;
+    html = `<div class="hp-grid">
+      <div class="hp-two">
+        <div class="hp-card now"><div class="lbl">Now</div>${nowCard}</div>
+        <div class="hp-card"><div class="lbl">Up next</div>${nextCard}</div>
+      </div>
+      <div class="hp-card"><div class="lbl">${today.label} · Convents in charge</div><div class="it">${esc(today.charge)}</div></div>
+      ${today.speaker?`<div class="hp-card"><div class="lbl">Today’s speaker</div><div class="big" style="font-size:17px">${esc(today.speaker.who)}</div>
+        <div class="it">“${esc(today.speaker.topic.replace(/^“|”$/g,""))}”</div></div>`:""}
+    </div><a class="hp-link" href="#day-${today.n}">See today’s full schedule →</a>`;
+  }
+  $("#hpBody").innerHTML = html;
+}
+
+function markNow(){
+  renderHappening();
+  const today = todayDay();
+  if(!today) return;
+  const now = manilaNow().m;
+  const d = DAYS.find(x=>x.n===today);
+  const all = [...d.am, ...d.pm];
+  let cur=null;
+  all.forEach((it,i)=>{ if(mins(it[0])<=now) cur=i; });
+  document.querySelectorAll(`.item[data-day="${today}"]`).forEach(el=>{
+    const i = all.findIndex(a=>a[0]===el.dataset.t);
+    el.classList.toggle("current", i===cur);
+    el.classList.toggle("past", cur!==null && i<cur);
+  });
+}
+
+function renderOverview(){
+  $("#overview").innerHTML = DAYS.map(d=>`<a class="ov" href="#day-${d.n}">
+    <span class="n">${d.n}</span><span><div class="s">${d.wd} · ${d.label}</div>
+    <div class="tp">${d.speaker?esc(d.speaker.who):"Group discussion and Closing Mass"}</div></span></a>`).join("");
+}
+
+function route(){
+  const m = location.hash.match(/^#day-(2[3-8])$/);
+  const n = m ? +m[1] : (todayDay() || 23);
+  renderDay(n);
+  if(m) window.scrollTo({top: document.querySelector("nav.days").offsetTop, behavior:"smooth"});
+}
+window.addEventListener("hashchange", route);
+renderOverview(); route();
+setInterval(markNow, 60000);
+</script>
+</body>
+</html>
