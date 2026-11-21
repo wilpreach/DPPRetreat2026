@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retreat Room Assignments</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Text:wght@400;700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: sticky search header, building filter chips, then one section per building with a grid of room cards. */
+:root {
+  --ink: #16181d;
+  --muted: #5d6270;
+  --paper: #f7f7f5;
+  --card: #ffffff;
+  --line: #e1e2e0;
+  --accent: #23395d;
+  --mark: #ffe58a;
+  --green: #2f7d4f;
+  --green-soft: #e6f2ea;
+  --yellow: #a87a00;
+  --yellow-soft: #fbf2d6;
+  --convent: #7a3b2e;
+  --convent-soft: #f5e9e5;
+  --camp: #2b5f8f;
+  --camp-soft: #e5eef7;
+  --font-display: "Libre Caslon Text", Georgia, "Times New Roman", serif;
+  --font-body: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ink: #eceef2; --muted: #a2a7b3; --paper: #121418; --card: #1b1e24; --line: #2c3038;
+    --accent: #9db6e0; --mark: #6b5a12;
+    --green: #6fcf97; --green-soft: #1a2c21;
+    --yellow: #e9c25a; --yellow-soft: #2e2711;
+    --convent: #e39a86; --convent-soft: #2f1d19;
+    --camp: #85b6e6; --camp-soft: #172636;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --ink: #eceef2; --muted: #a2a7b3; --paper: #121418; --card: #1b1e24; --line: #2c3038;
+  --accent: #9db6e0; --mark: #6b5a12;
+  --green: #6fcf97; --green-soft: #1a2c21;
+  --yellow: #e9c25a; --yellow-soft: #2e2711;
+  --convent: #e39a86; --convent-soft: #2f1d19;
+  --camp: #85b6e6; --camp-soft: #172636;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+header.top { padding: 28px 0 8px; }
+.eyebrow { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 5vw, 38px); line-height: 1.15; margin: 6px 0 4px; text-wrap: balance; }
+.sub { color: var(--muted); margin: 0; }
+
+.bar { position: sticky; top: 0; z-index: 5; background: var(--paper); padding: 14px 0 12px; border-bottom: 1px solid var(--line); }
+.search { position: relative; }
+.search svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+#q { width: 100%; font: inherit; font-size: 17px; padding: 13px 44px 13px 44px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); }
+#q:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+#clear { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; display: none; }
+#clear:hover { background: var(--line); }
+#clear:focus-visible { outline: 2px solid var(--accent); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.chip { font: inherit; font-size: 14px; font-weight: 600; border: 1.5px solid var(--line); background: var(--card); color: var(--ink); padding: 6px 12px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
+.chip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--c, var(--ink)); }
+.chip .n { color: var(--muted); font-weight: 500; font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] { border-color: var(--c, var(--ink)); background: var(--cs, var(--line)); }
+.chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.status { margin-top: 10px; font-size: 14px; color: var(--muted); min-height: 21px; }
+
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px; margin: 22px 0 6px; }
+.legend div { background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--c); border-radius: 8px; padding: 10px 12px; font-size: 14px; }
+.legend b { display: block; }
+.legend span { color: var(--muted); }
+
+section.bld { margin: 30px 0 10px; }
+.bld-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-bottom: 2px solid var(--c); padding-bottom: 8px; margin-bottom: 14px; }
+.bld-head h2 { font-family: var(--font-display); font-size: 24px; margin: 0; display: flex; align-items: center; gap: 10px; }
+.bld-head h2 .sw { width: 14px; height: 14px; border-radius: 3px; background: var(--c); }
+.bld-head .meta { color: var(--muted); font-size: 14px; }
+h3.group { font-size: 13px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 18px 0 10px; font-weight: 700; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.room { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.room.hit { border-color: var(--c); box-shadow: 0 0 0 1px var(--c); }
+.room-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.rno { font-family: var(--font-display); font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; }
+.tag { font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: var(--cs); color: var(--c); white-space: nowrap; }
+.room ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.room li { font-size: 15px; }
+.room li .sn { font-weight: 700; letter-spacing: .01em; }
+.room li.dim { color: var(--muted); }
+.room li.note { color: var(--muted); font-style: italic; }
+mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
+
+.empty { text-align: center; padding: 50px 10px; color: var(--muted); }
+.empty b { color: var(--ink); display: block; font-size: 18px; margin-bottom: 4px; }
+
+footer { margin: 40px 0 30px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+footer .tot { font-variant-numeric: tabular-nums; }
+
+[data-b="green"] { --c: var(--green); --cs: var(--green-soft); }
+[data-b="yellow"] { --c: var(--yellow); --cs: var(--yellow-soft); }
+[data-b="convent"] { --c: var(--convent); --cs: var(--convent-soft); }
+[data-b="camp"] { --c: var(--camp); --cs: var(--camp-soft); }
+
+@media (max-width: 420px) {
+  .wrap { padding: 0 16px; }
+  .grid { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .room { transition: border-color .15s, box-shadow .15s; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Province-Wide Retreat · Nov 23–28, 2026</div>
+    <h1>Room Assignments</h1>
+    <p class="sub">Saint Paul Center for Renewal</p>
+  </header>
+</div>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="search">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <label for="q" class="sr" style="position:absolute;left:-9999px">Search by name or room</label>
+      <input id="q" type="search" placeholder="Search a brother's name or room number" autocomplete="off" spellcheck="false">
+      <button id="clear" type="button" aria-label="Clear search">×</button>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter by building"></div>
+    <div class="status" id="status" aria-live="polite"></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="legend" id="legend"></div>
+  <main id="main"></main>
+  <div class="empty" id="empty" hidden><b>No brother found</b>Check the spelling, or try just the surname.</div>
+  <footer>
+    <span class="tot">Total attending: 139 brothers</span>
+    <span>Prepared by Br. Winston Ferdinand Roman I F. Cabading, OP · Promoter of Permanent Formation</span>
+  </footer>
+</div>
+
+<script>
+// Names are [SURNAME, Given]. Rooms grouped per building.
+const DATA = [
+  {
+    id: "green", name: "Green Building", count: 47, meta: "Twin sharing",
+    groups: [
+      { label: "First floor", rooms: [
+        ["103", [["RIVERA","Efren"]]],
+        ["109", [["BELTRAN","Franklin"]]],
+        ["110", [["ROUX","Manuel"]]],
+        ["111", [["SIÑGIAN","Hilario Jr."]]],
+        ["112", [["PEDREGOSA","Quirico Jr."]]],
+        ["113", [["ECLEO","Senen"]]],
+        ["114", [["PESTIN","Arturo"]]],
+        ["115", [["ALAURIN","Edgardo"]]],
+        ["116", [["TIONG","Pablo"]]],
+        ["117", [["MANLANGIT","Jerry"]]],
+        ["118", [["PONCE","Juan"]]],
+        ["121", [["MORENO","George"]]],
+        ["122", [["BAYARAS","Raymundo"]]],
+        ["123", [["MANLAPAS","Oscar"]]],
+        ["124", [["ENCARNACION","Napoleon"]]],
+        ["125", [["DIAS","Jayalath Balagallage"]]]
+      ]},
+      { label: "Second floor", rooms: [
+        ["201", [["CASTOR","Noel Kristoffer"],["DACUMA","Arden Xerxes"]]],
+        ["202", [["MARQUEZ","Clarence Victor"]]],
+        ["203", [["GATELA","Maximo"]]],
+        ["204", [["SARIA","Melchor"]]],
+        ["205", [["ZABALA","Gerard"],["ROQUERO","Jude Guesler"]]],
+        ["207", [["MIRANDA","Jesus Jr."]]],
+        ["208", [["LUANZON","Roberto Jr."]]],
+        ["209", [["DINGEL","Arthur"]]],
+        ["210", [["HIWATAG","Patricio"],["DE GUZMAN","Allen"]]],
+        ["211", [["LOPEZ","Allan"],["CANCERAN","Delfo"]]],
+        ["212", [["CALVO","Victor Jr."],["SIGAYA","Gaspar"]]],
+        ["213", [["RODRIGUEZ","Romulo"]]],
+        ["214", [["SANTOS","Roman"]]],
+        ["215", [["JOSE","Raymond Fernando"]]],
+        ["216", [["ADIREDJO","Adrian"],["ABOGADO","Jannel"]]],
+        ["218", [["SARIA","Marcelino"],["OBSIOMA","Raul"]]],
+        ["219", [["CABANATAN","Romualdo Jr."],["OBANDO","Ivan Paul"]]],
+        ["220", [["MAGBOO","Cecilio Vladimir"],["CANSANCIO","Rodel"]]],
+        ["221", [["NAMUAG","Bejay"],["KURNIAWAN","Andreas"]]],
+        ["222", [["AYTONA","Christopher Jeffrey"],["MALIJAN","Mhandy"]]]
+      ]}
+    ]
+  },
+  {
+    id: "yellow", name: "Yellow Building", count: 53, meta: "Twin sharing",
+    groups: [
+      { label: "First floor", rooms: [
+        ["103", [["ALIGAN","Rodel"]]],
+        ["109", [["LUSUEGRO","Rafael"]]],
+        ["110", [["FERNANDEZ","Alfredo Jr."]]],
+        ["111", [["MENDEZ","Ramon Claro"]]],
+        ["112", [["CABILLON","Eugenio"]]],
+        ["113", [["TRINILLA","Bienvenido Jr."]]],
+        ["114", [["OJOY","Virgilio Aderiano"]]],
+        ["115", [["BOMBASE","Gallardo Jr."]]],
+        ["116", [["NANTES","Edmund"]]],
+        ["117", [["LAO","Edwin"]]],
+        ["118", [["MARRA","Conrado"]]],
+        ["121", [["REYES","Roberto"]]],
+        ["122", [["ALAMILLO","Jaime"]]],
+        ["123", [["CASTRO","Rolando Felix"]]],
+        ["124", [["GREGORY","Greg"]]],
+        ["125", [["RAQUID","Joseph"]]]
+      ]},
+      { label: "Second floor", rooms: [
+        ["201", [["PEDROSO","Junel"],["BORRE","Francis"]]],
+        ["202", [["DE BELEN","Ramiro"],["SONTILLANO","John Paul"]]],
+        ["203", [["SALES","Michael"],["DE LOS REYES","Felix Jr."]]],
+        ["204", [["GARCIA","Melencio"],["RASANJANA","Manoj"]]],
+        ["205", [["CANTO","Carlo Rey"],["GARINGANAO","Christopher"]]],
+        ["207", [["TIONGCO","Isaias Antonio"]]],
+        ["208", [["SALIBAY","Ramon"]]],
+        ["209", [["BERNADAS","Joseto Jr."]]],
+        ["210", [["SEÑO","Rudolf Steven"],["JAVIER","Paul Lovell"]]],
+        ["211", [["TALAVERA","Paul Reagan"],["ESTRELLA","Narciso Jr."]]],
+        ["212", [["TJIPTO","Mingdry Hanafi"],["GONZALES","Jayson"]]],
+        ["213", [["RUSENO","Valentinus Bayuhadi"],["PANGAN","Art Vincent"]]],
+        ["214", [["MUNSAYAC","Reynor"],["GAMBOA","Glen Mar"]]],
+        ["215", [["NGAWAN","Rambang"],["HERMAWAN","Agus"]]],
+        ["216", [["SEÑO","Alexander Constantine"],["PAGADUAN","Jeffrey"]]],
+        ["218", [["LOMAGUE","Mervin"],["BAUTISTA","John Andrew"]]],
+        ["219", [["GERONIMO","Jerone"],["ALERTA","Sandy"]]],
+        ["220", [["CHIONG","Siddharta"],["MELENDRES","Ian Jeoffrey"]]],
+        ["221", [["BOÑON","Wilhelm"],["GUNAWAN","Samuel"]]],
+        ["222", [["LA JA","Stephen"],["CASTELLANO","Roberto Jr."]]]
+      ]}
+    ]
+  },
+  {
+    id: "convent", name: "Convent Building", count: 19, meta: "Individual rooms",
+    groups: [
+      { label: "First floor · private bathroom", tag: "Private bath", rooms: [
+        ["1", [["DELA CRUZ","Filemon Jr."]]],
+        ["2", [], "Retreat Speaker"],
+        ["Priest's Quarter", [["YAP","Jessie"]], null, "Sacristy"]
+      ]},
+      { label: "Second floor · private bathroom", tag: "Private bath", rooms: [
+        ["4", [["EUDELA","Anthony"]]],
+        ["5", [["LEGASPI","Felix III"]]],
+        ["6", [["ARCEO","Ernesto"]]],
+        ["7", [["CABADING","Winston Ferdinand Roman I"]]],
+        ["8", [["DE DIOS","Lauro"]]],
+        ["9", [["SIBUG","Jose Martin"]]],
+        ["15", [["PAMA","Hermel"]]],
+        ["16", [["MARIANTO","Robini"]]]
+      ]},
+      { label: "Second floor · common bathroom", tag: "Common bath", rooms: [
+        ["10", [["TIYANTO","Tommy Riezky"]]],
+        ["11", [["IÑIGO","Vince Stanley"]]],
+        ["12", [["SETIAWAN","Dominic"]]],
+        ["13", [["MATA","Laurence Ryan"]]],
+        ["14", [["LUNTUNGAN","Johnny"]]],
+        ["17", [["KUNG","Aloysius Aris"]]],
+        ["18", [["BARRIENTOS","Charles Moises"]]]
+      ]},
+      { label: "Third floor · private bathroom", tag: "Private bath", rooms: [
+        ["3F-1", [["ARSCIWALS","Giuseppe Pietro"]]],
+        ["3F-4", [["SULPICO","Boyd"]]]
+      ]}
+    ]
+  },
+  {
+    id: "camp", name: "Camp Benjamin", count: 20, meta: "Off-site lodging · Student brothers & deacons",
+    groups: [
+      { label: "Houses", rooms: [
+        ["H-103", [["PRIYANTO","Andreas"],["ABOY","Eugene Dominic"]]],
+        ["H-104", [["PRAYUDI","Budiman"],["DILEYON","Satria Abi"],["AGUILAR","Rae Aaron"]]],
+        ["H-106", [["MELENDRES","Ian Joseph"],["COLEGADO","Denver Marx"],["PRAMUDIANTO","Antonius Widhi"]]],
+        ["H-109", [["PAMINTUAN","John Paul"],["DELA ROSA","Michael Angelo"],["ESTRELLA","Gian Linardo Mari"]]],
+        ["H-110", [["MORADA","Julian Christopher"],["CATURZA","John Rheed"],["MATEO","Leonito"]]],
+        ["H-111", [["SABDANINGRAT","Lukas"],["HALIM","Diego Ardianto"],["GODALLE","Jaymar"]]],
+        ["H-112", [["ENRIQUEZ","Joenner Paulo"],["DEARBANTOLO","Robertus Silveriano"],["MORON","Nico Paolo"]]]
+      ]}
+    ]
+  }
+];
+
+const LEGEND = [
+  ["convent", "Private bathroom", "Priors, superiors, school heads, senior brothers"],
+  ["convent", "Shared bathroom (Convent)", "Individual rooms, other brothers"],
+  ["camp", "Camp Benjamin", "Off-site: student brothers and deacons"],
+  ["green", "Green & Yellow Buildings", "Twin sharing: all other brothers"]
+];
+
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[.,]/g, " ").replace(/\s+/g, " ").trim();
+const esc = s => s.replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c]));
+
+// Highlight query tokens inside a string, ignoring accents.
+function hl(text, tokens) {
+  if (!tokens.length) return esc(text);
+  const base = text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+  // map: base is same length as text when each char decomposes to char+marks removed? Build index map.
+  const map = []; let b = "";
+  for (let i = 0; i < text.length; i++) {
+    const d = text[i].normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    for (const ch of d) { b += ch; map.push(i); }
+  }
+  const marks = new Array(text.length).fill(false);
+  for (const t of tokens) {
+    let from = 0, idx;
+    while (t && (idx = b.indexOf(t, from)) !== -1) {
+      for (let k = idx; k < idx + t.length; k++) marks[map[k]] = true;
+      from = idx + t.length;
+    }
+  }
+  let out = "", open = false;
+  for (let i = 0; i < text.length; i++) {
+    if (marks[i] && !open) { out += "<mark>"; open = true; }
+    if (!marks[i] && open) { out += "</mark>"; open = false; }
+    out += esc(text[i]);
+  }
+  if (open) out += "</mark>";
+  return out;
+}
+
+let filter = "all";
+const $ = id => document.getElementById(id);
+
+function buildChips() {
+  const chips = [["all", "All buildings", 139], ...DATA.map(b => [b.id, b.name, b.count])];
+  $("chips").innerHTML = chips.map(([id, name, n]) =>
+    `<button type="button" class="chip" data-f="${id}" ${id !== "all" ? `data-b="${id}"` : ""} aria-pressed="${id === filter}">${id !== "all" ? '<span class="dot"></span>' : ""}${name} <span class="n">${n}</span></button>`
+  ).join("");
+  $("chips").querySelectorAll(".chip").forEach(btn => btn.addEventListener("click", () => {
+    filter = btn.dataset.f; buildChips(); render();
+  }));
+  $("legend").innerHTML = LEGEND.map(([b, t, d]) => `<div data-b="${b}"><b>${t}</b><span>${d}</span></div>`).join("");
+}
+
+function render() {
+  const raw = $("q").value;
+  $("clear").style.display = raw ? "block" : "none";
+  const q = norm(raw);
+  const tokens = q ? q.split(" ").filter(Boolean) : [];
+  let html = "", hits = 0, found = [];
+
+  for (const b of DATA) {
+    if (filter !== "all" && filter !== b.id) continue;
+    let bHtml = "";
+    for (const g of b.groups) {
+      let gHtml = "";
+      for (const [no, people, note, sub] of g.rooms) {
+        const roomStr = norm(`${no} room ${no} ${b.name} ${note || ""} ${sub || ""}`);
+        const personMatch = people.map(([s, f]) => {
+          const hay = norm(`${s} ${f} ${f} ${s}`);
+          return tokens.length > 0 && tokens.every(t => hay.includes(t));
+        });
+        const roomMatch = tokens.length > 0 && tokens.every(t => roomStr.includes(t) || norm(no) === t);
+        const anyPerson = personMatch.some(Boolean);
+        if (tokens.length && !anyPerson && !roomMatch) continue;
+        if (anyPerson) personMatch.forEach((m, i) => { if (m) { hits++; found.push({ n: people[i], b, no }); } });
+        const tag = g.tag || (people.length >= 2 ? `${people.length} sharing` : people.length === 1 ? "Single" : "");
+        const isHouse = no.startsWith("H-");
+        const label = isHouse ? no : (/^\d/.test(no) ? `Room ${no}` : no);
+        const list = people.map(([s, f], i) => {
+          const cls = tokens.length && anyPerson && !personMatch[i] ? ' class="dim"' : "";
+          return `<li${cls}><span class="sn">${hl(s, anyPerson ? tokens : [])}</span>, ${hl(f, anyPerson ? tokens : [])}</li>`;
+        }).join("") + (note ? `<li class="note">${hl(note, roomMatch ? tokens : [])}</li>` : "") + (sub ? `<li class="note">${esc(sub)}</li>` : "");
+        gHtml += `<article class="room${tokens.length ? " hit" : ""}" data-b="${b.id}">
+          <div class="room-top"><span class="rno">${hl(label, roomMatch && !anyPerson ? tokens : [])}</span>${tag ? `<span class="tag">${tag}</span>` : ""}</div>
+          <ul>${list}</ul></article>`;
+      }
+      if (gHtml) bHtml += `<h3 class="group">${g.label}</h3><div class="grid">${gHtml}</div>`;
+    }
+    if (bHtml) html += `<section class="bld" data-b="${b.id}" id="${b.id}">
+      <div class="bld-head"><h2><span class="sw"></span>${b.name}</h2><span class="meta">${b.meta} · ${b.count} brothers</span></div>${bHtml}</section>`;
+  }
+
+  $("main").innerHTML = html;
+  $("empty").hidden = !!html;
+  $("legend").style.display = tokens.length ? "none" : "";
+
+  if (!tokens.length) {
+    $("status").textContent = filter === "all" ? "139 brothers in 4 buildings. Type a name to find a room." : "";
+  } else if (hits === 1) {
+    const f = found[0];
+    const where = f.no.startsWith("H-") ? f.no : (/^\d/.test(f.no) ? `Room ${f.no}` : f.no);
+    $("status").innerHTML = `<b style="color:var(--ink)">${esc(f.n[0])}, ${esc(f.n[1])}</b> is in <b style="color:var(--ink)">${f.b.name}, ${esc(where)}</b>`;
+  } else if (hits > 1) {
+    $("status").textContent = `${hits} brothers match`;
+  } else if (html) {
+    $("status").textContent = "Matching rooms";
+  } else {
+    $("status").textContent = "";
+  }
+}
+
+$("q").addEventListener("input", render);
+$("clear").addEventListener("click", () => { $("q").value = ""; render(); $("q").focus(); });
+buildChips();
+render();
+</script>
+</body>
+</html>

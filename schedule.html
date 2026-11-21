@@ -105,6 +105,57 @@
   .ov .s{font-size:14px;color:var(--muted)}
   .ov .tp{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:17px;line-height:1.3}
   footer{text-align:center;font-size:12px;color:var(--muted);padding:20px 16px 40px}
+  .hdr-btns{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:18px}
+  .hdr-btns .pb-btn{margin-top:0}
+  .pb-btn.alt{background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,.55)}
+
+  /* Room finder */
+  section.rooms{max-width:720px;margin:0 auto;padding:8px 16px 10px;scroll-margin-top:84px}
+  section.rooms h2{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;font-size:28px;margin:18px 0 2px}
+  section.rooms .lead{font-size:14px;color:var(--muted);margin:0 0 12px}
+  .rf-search{position:relative}
+  .rf-search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+  #rfQ{width:100%;font:inherit;font-size:17px;padding:12px 42px;border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
+  #rfQ:focus{outline:none;border-color:var(--ink);box-shadow:0 0 0 3px rgba(22,19,15,.12)}
+  #rfClear{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--muted);font-size:22px;width:34px;height:34px;border-radius:8px;cursor:pointer;display:none}
+  #rfClear:focus-visible,.rf-chip:focus-visible,.rf-bld:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+  .rf-chips{display:flex;gap:6px;overflow-x:auto;margin-top:10px;padding-bottom:2px;scrollbar-width:none}
+  .rf-chips::-webkit-scrollbar{display:none}
+  .rf-chip{flex:0 0 auto;font:inherit;font-size:13px;font-weight:600;border:1px solid var(--line);background:#fff;color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .rf-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--c,var(--ink))}
+  .rf-chip .n{color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+  .rf-chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .rf-chip[aria-pressed="true"] .n{color:#d8cfbd}
+  .rf-status{font-size:14px;color:var(--muted);margin:10px 0 4px;min-height:21px}
+  .rf-status b{color:var(--ink)}
+  .rf-blds{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+  @media (max-width:420px){.rf-blds{grid-template-columns:1fr}}
+  .rf-bld{font:inherit;text-align:left;cursor:pointer;background:#fff;border:1px solid var(--line);border-left:5px solid var(--c);border-radius:14px;padding:12px 14px;color:var(--ink)}
+  .rf-bld .t{font-weight:700;font-size:16px}
+  .rf-bld .s{font-size:13px;color:var(--muted);margin-top:2px}
+  .rf-bld .k{font-size:12px;font-weight:700;color:var(--c);margin-top:6px}
+  .rf-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;border-bottom:2px solid var(--c);padding-bottom:6px;margin:16px 0 4px}
+  .rf-head h3{margin:0;font-family:"Cormorant Garamond",Georgia,serif;font-size:22px;font-weight:600}
+  .rf-head span{font-size:13px;color:var(--muted)}
+  .rf-grp{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:12px 0 8px}
+  .rf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+  .rf-room{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+  .rf-room.hit{border-color:var(--c);box-shadow:0 0 0 1px var(--c)}
+  .rf-room .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .rf-room .no{font-weight:700;font-size:16px;font-variant-numeric:tabular-nums}
+  .rf-room .tag{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:999px;background:var(--cs);color:var(--c);white-space:nowrap}
+  .rf-room ul{list-style:none;margin:4px 0 0;padding:0}
+  .rf-room li{font-size:14px;margin:1px 0}
+  .rf-room li .sn{font-weight:700}
+  .rf-room li.dim{color:var(--muted)}
+  .rf-room li.note{color:var(--muted);font-style:italic}
+  .rf-room mark{background:var(--now);color:inherit;border-radius:2px}
+  .rf-empty{text-align:center;color:var(--muted);padding:24px 8px}
+  .rf-back{font:inherit;font-size:14px;font-weight:600;color:var(--accent);background:none;border:0;padding:0;margin-top:14px;cursor:pointer}
+  [data-b="green"]{--c:#2f7d4f;--cs:#e6f2ea}
+  [data-b="yellow"]{--c:#9a6f00;--cs:#fbf0cf}
+  [data-b="convent"]{--c:#9b1c1c;--cs:#f7e4e1}
+  [data-b="camp"]{--c:#1f4e8c;--cs:#e3ecf7}
 </style>
 </head>
 <body>
@@ -112,7 +163,10 @@
   <div class="kicker">Retreat Guide</div>
   <h1>Province-Wide Retreat</h1>
   <div class="meta"><b>November 23–28, 2026</b> · Monday to Saturday<br>Saint Paul Center for Renewal, Alfonso, Cavite</div>
-  <a class="pb-btn" href="https://wilpreach.github.io/DPPRetreat2026/">🕯️ Open the Prayer Book</a>
+  <div class="hdr-btns">
+    <a class="pb-btn" href="https://wilpreach.github.io/DPPRetreat2026/">🕯️ Open the Prayer Book</a>
+    <a class="pb-btn alt" href="#rooms">🛏️ Find My Room</a>
+  </div>
   <blockquote>“All the brothers should make a retreat for six full days each year, meditating on the word of God in their hearts and praying more intensely.”<cite>LCO 68</cite></blockquote>
 </header>
 
@@ -127,6 +181,20 @@
 <main>
   <div id="day"></div>
 </main>
+
+<section class="rooms" id="rooms">
+  <h2>Room Assignments</h2>
+  <p class="lead">139 brothers in four buildings. Type your name to find your room.</p>
+  <div class="rf-search">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    <label for="rfQ" style="position:absolute;left:-9999px">Search by name or room</label>
+    <input id="rfQ" type="search" placeholder="Search a brother's name or room" autocomplete="off" spellcheck="false">
+    <button id="rfClear" type="button" aria-label="Clear search">×</button>
+  </div>
+  <div class="rf-chips" id="rfChips" role="group" aria-label="Filter by building"></div>
+  <div class="rf-status" id="rfStatus" aria-live="polite"></div>
+  <div id="rfBody"></div>
+</section>
 
 <section class="info">
   <h2>The Week at a Glance</h2>
@@ -332,8 +400,131 @@ function route(){
   renderDay(n);
   if(m) window.scrollTo({top: document.querySelector("nav.days").offsetTop, behavior:"smooth"});
 }
+/* ---------- Room assignments ---------- */
+const ROOMS = [
+  { id:"green", name:"Green Building", count:47, meta:"Twin sharing", groups:[
+    { label:"First floor", rooms:[
+      ["103",[["RIVERA","Efren"]]],["109",[["BELTRAN","Franklin"]]],["110",[["ROUX","Manuel"]]],["111",[["SIÑGIAN","Hilario Jr."]]],
+      ["112",[["PEDREGOSA","Quirico Jr."]]],["113",[["ECLEO","Senen"]]],["114",[["PESTIN","Arturo"]]],["115",[["ALAURIN","Edgardo"]]],
+      ["116",[["TIONG","Pablo"]]],["117",[["MANLANGIT","Jerry"]]],["118",[["PONCE","Juan"]]],["121",[["MORENO","George"]]],
+      ["122",[["BAYARAS","Raymundo"]]],["123",[["MANLAPAS","Oscar"]]],["124",[["ENCARNACION","Napoleon"]]],["125",[["DIAS","Jayalath Balagallage"]]]]},
+    { label:"Second floor", rooms:[
+      ["201",[["CASTOR","Noel Kristoffer"],["DACUMA","Arden Xerxes"]]],["202",[["MARQUEZ","Clarence Victor"]]],["203",[["GATELA","Maximo"]]],
+      ["204",[["SARIA","Melchor"]]],["205",[["ZABALA","Gerard"],["ROQUERO","Jude Guesler"]]],["207",[["MIRANDA","Jesus Jr."]]],
+      ["208",[["LUANZON","Roberto Jr."]]],["209",[["DINGEL","Arthur"]]],["210",[["HIWATAG","Patricio"],["DE GUZMAN","Allen"]]],
+      ["211",[["LOPEZ","Allan"],["CANCERAN","Delfo"]]],["212",[["CALVO","Victor Jr."],["SIGAYA","Gaspar"]]],["213",[["RODRIGUEZ","Romulo"]]],
+      ["214",[["SANTOS","Roman"]]],["215",[["JOSE","Raymond Fernando"]]],["216",[["ADIREDJO","Adrian"],["ABOGADO","Jannel"]]],
+      ["218",[["SARIA","Marcelino"],["OBSIOMA","Raul"]]],["219",[["CABANATAN","Romualdo Jr."],["OBANDO","Ivan Paul"]]],
+      ["220",[["MAGBOO","Cecilio Vladimir"],["CANSANCIO","Rodel"]]],["221",[["NAMUAG","Bejay"],["KURNIAWAN","Andreas"]]],
+      ["222",[["AYTONA","Christopher Jeffrey"],["MALIJAN","Mhandy"]]]]}]},
+  { id:"yellow", name:"Yellow Building", count:53, meta:"Twin sharing", groups:[
+    { label:"First floor", rooms:[
+      ["103",[["ALIGAN","Rodel"]]],["109",[["LUSUEGRO","Rafael"]]],["110",[["FERNANDEZ","Alfredo Jr."]]],["111",[["MENDEZ","Ramon Claro"]]],
+      ["112",[["CABILLON","Eugenio"]]],["113",[["TRINILLA","Bienvenido Jr."]]],["114",[["OJOY","Virgilio Aderiano"]]],["115",[["BOMBASE","Gallardo Jr."]]],
+      ["116",[["NANTES","Edmund"]]],["117",[["LAO","Edwin"]]],["118",[["MARRA","Conrado"]]],["121",[["REYES","Roberto"]]],
+      ["122",[["ALAMILLO","Jaime"]]],["123",[["CASTRO","Rolando Felix"]]],["124",[["GREGORY","Greg"]]],["125",[["RAQUID","Joseph"]]]]},
+    { label:"Second floor", rooms:[
+      ["201",[["PEDROSO","Junel"],["BORRE","Francis"]]],["202",[["DE BELEN","Ramiro"],["SONTILLANO","John Paul"]]],
+      ["203",[["SALES","Michael"],["DE LOS REYES","Felix Jr."]]],["204",[["GARCIA","Melencio"],["RASANJANA","Manoj"]]],
+      ["205",[["CANTO","Carlo Rey"],["GARINGANAO","Christopher"]]],["207",[["TIONGCO","Isaias Antonio"]]],["208",[["SALIBAY","Ramon"]]],
+      ["209",[["BERNADAS","Joseto Jr."]]],["210",[["SEÑO","Rudolf Steven"],["JAVIER","Paul Lovell"]]],
+      ["211",[["TALAVERA","Paul Reagan"],["ESTRELLA","Narciso Jr."]]],["212",[["TJIPTO","Mingdry Hanafi"],["GONZALES","Jayson"]]],
+      ["213",[["RUSENO","Valentinus Bayuhadi"],["PANGAN","Art Vincent"]]],["214",[["MUNSAYAC","Reynor"],["GAMBOA","Glen Mar"]]],
+      ["215",[["NGAWAN","Rambang"],["HERMAWAN","Agus"]]],["216",[["SEÑO","Alexander Constantine"],["PAGADUAN","Jeffrey"]]],
+      ["218",[["LOMAGUE","Mervin"],["BAUTISTA","John Andrew"]]],["219",[["GERONIMO","Jerone"],["ALERTA","Sandy"]]],
+      ["220",[["CHIONG","Siddharta"],["MELENDRES","Ian Jeoffrey"]]],["221",[["BOÑON","Wilhelm"],["GUNAWAN","Samuel"]]],
+      ["222",[["LA JA","Stephen"],["CASTELLANO","Roberto Jr."]]]]}]},
+  { id:"convent", name:"Convent Building", count:19, meta:"Individual rooms · priors, superiors, school heads, senior brothers", groups:[
+    { label:"First floor · private bathroom", tag:"Private bath", rooms:[
+      ["1",[["DELA CRUZ","Filemon Jr."]]],["2",[],"Retreat Speaker"],["Priest's Quarter",[["YAP","Jessie"]],"Sacristy"]]},
+    { label:"Second floor · private bathroom", tag:"Private bath", rooms:[
+      ["4",[["EUDELA","Anthony"]]],["5",[["LEGASPI","Felix III"]]],["6",[["ARCEO","Ernesto"]]],["7",[["CABADING","Winston Ferdinand Roman I"]]],
+      ["8",[["DE DIOS","Lauro"]]],["9",[["SIBUG","Jose Martin"]]],["15",[["PAMA","Hermel"]]],["16",[["MARIANTO","Robini"]]]]},
+    { label:"Second floor · common bathroom", tag:"Common bath", rooms:[
+      ["10",[["TIYANTO","Tommy Riezky"]]],["11",[["IÑIGO","Vince Stanley"]]],["12",[["SETIAWAN","Dominic"]]],["13",[["MATA","Laurence Ryan"]]],
+      ["14",[["LUNTUNGAN","Johnny"]]],["17",[["KUNG","Aloysius Aris"]]],["18",[["BARRIENTOS","Charles Moises"]]]]},
+    { label:"Third floor · private bathroom", tag:"Private bath", rooms:[
+      ["3F-1",[["ARSCIWALS","Giuseppe Pietro"]]],["3F-4",[["SULPICO","Boyd"]]]]}]},
+  { id:"camp", name:"Camp Benjamin", count:20, meta:"Off-site lodging · student brothers and deacons", groups:[
+    { label:"Houses", rooms:[
+      ["H-103",[["PRIYANTO","Andreas"],["ABOY","Eugene Dominic"]]],
+      ["H-104",[["PRAYUDI","Budiman"],["DILEYON","Satria Abi"],["AGUILAR","Rae Aaron"]]],
+      ["H-106",[["MELENDRES","Ian Joseph"],["COLEGADO","Denver Marx"],["PRAMUDIANTO","Antonius Widhi"]]],
+      ["H-109",[["PAMINTUAN","John Paul"],["DELA ROSA","Michael Angelo"],["ESTRELLA","Gian Linardo Mari"]]],
+      ["H-110",[["MORADA","Julian Christopher"],["CATURZA","John Rheed"],["MATEO","Leonito"]]],
+      ["H-111",[["SABDANINGRAT","Lukas"],["HALIM","Diego Ardianto"],["GODALLE","Jaymar"]]],
+      ["H-112",[["ENRIQUEZ","Joenner Paulo"],["DEARBANTOLO","Robertus Silveriano"],["MORON","Nico Paolo"]]]]}]}
+];
+
+(function(){
+  const el = id => document.getElementById(id);
+  const fold = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+  const norm = s => fold(s).replace(/[.,']/g," ").replace(/\s+/g," ").trim();
+  const roomLabel = no => no.startsWith("H-") ? no : (/^\d/.test(no) ? "Room "+no : no);
+  let bFilter = null;
+
+  function hl(text, tokens){
+    if(!tokens.length) return esc(text);
+    let b=""; const map=[];
+    for(let i=0;i<text.length;i++){ for(const ch of fold(text[i])){ b+=ch; map.push(i); } }
+    const on = new Array(text.length).fill(false);
+    for(const t of tokens){ let f=0,i; while((i=b.indexOf(t,f))!==-1){ for(let k=i;k<i+t.length;k++) on[map[k]]=true; f=i+t.length; } }
+    let out="",open=false;
+    for(let i=0;i<text.length;i++){ if(on[i]&&!open){out+="<mark>";open=true;} if(!on[i]&&open){out+="</mark>";open=false;} out+=esc(text[i]); }
+    return out+(open?"</mark>":"");
+  }
+
+  function chips(){
+    el("rfChips").innerHTML = ROOMS.map(b=>`<button type="button" class="rf-chip" data-b="${b.id}" aria-pressed="${bFilter===b.id}"><span class="dot"></span>${b.name} <span class="n">${b.count}</span></button>`).join("");
+    el("rfChips").querySelectorAll(".rf-chip").forEach(x=>x.addEventListener("click",()=>{ bFilter = bFilter===x.dataset.b ? null : x.dataset.b; draw(); }));
+  }
+
+  function draw(){
+    chips();
+    const raw = el("rfQ").value; el("rfClear").style.display = raw ? "block" : "none";
+    const q = norm(raw), tokens = q ? q.split(" ") : [];
+    if(!tokens.length && !bFilter){
+      el("rfStatus").textContent = "Or pick a building to see all its rooms.";
+      el("rfBody").innerHTML = `<div class="rf-blds">${ROOMS.map(b=>`<button type="button" class="rf-bld" data-b="${b.id}"><div class="t">${b.name}</div><div class="s">${b.meta}</div><div class="k">${b.count} brothers →</div></button>`).join("")}</div>`;
+      el("rfBody").querySelectorAll(".rf-bld").forEach(x=>x.addEventListener("click",()=>{ bFilter=x.dataset.b; draw(); }));
+      return;
+    }
+    let html="", found=[];
+    for(const b of ROOMS){
+      if(bFilter && bFilter!==b.id) continue;
+      let bh="";
+      for(const g of b.groups){
+        let gh="";
+        for(const [no,people,note] of g.rooms){
+          const pm = people.map(([s,f])=>tokens.length>0 && tokens.every(t=>norm(s+" "+f).includes(t)));
+          const rm = tokens.length>0 && tokens.every(t=>norm("room "+no+" "+b.name+" "+(note||"")).includes(t));
+          const anyP = pm.some(Boolean);
+          if(tokens.length && !anyP && !rm) continue;
+          pm.forEach((m,i)=>{ if(m) found.push({p:people[i],b,no}); });
+          const tag = g.tag || (people.length>1 ? people.length+" sharing" : people.length ? "Single" : "");
+          const li = people.map(([s,f],i)=>`<li${tokens.length&&anyP&&!pm[i]?' class="dim"':''}><span class="sn">${hl(s,anyP?tokens:[])}</span>, ${hl(f,anyP?tokens:[])}</li>`).join("") + (note?`<li class="note">${esc(note)}</li>`:"");
+          gh += `<div class="rf-room${tokens.length?' hit':''}" data-b="${b.id}"><div class="top"><span class="no">${esc(roomLabel(no))}</span>${tag?`<span class="tag">${tag}</span>`:""}</div><ul>${li}</ul></div>`;
+        }
+        if(gh) bh += `<div class="rf-grp">${g.label}</div><div class="rf-grid">${gh}</div>`;
+      }
+      if(bh) html += `<div data-b="${b.id}"><div class="rf-head"><h3>${b.name}</h3><span>${b.meta} · ${b.count} brothers</span></div>${bh}</div>`;
+    }
+    if(!html) html = `<div class="rf-empty"><b style="color:var(--ink)">No brother found.</b><br>Check the spelling, or try just the surname.</div>`;
+    html += `<button type="button" class="rf-back" id="rfBack">← All buildings</button>`;
+    el("rfBody").innerHTML = html;
+    el("rfBack").addEventListener("click",()=>{ bFilter=null; el("rfQ").value=""; draw(); el("rooms").scrollIntoView({behavior:"smooth"}); });
+    if(found.length===1){ const f=found[0]; el("rfStatus").innerHTML = `<b>${esc(f.p[0])}, ${esc(f.p[1])}</b> is in <b>${f.b.name}, ${esc(roomLabel(f.no))}</b>`; }
+    else el("rfStatus").textContent = found.length ? found.length+" brothers match" : (tokens.length ? "" : ROOMS.find(b=>b.id===bFilter).name+": all rooms");
+  }
+
+  el("rfQ").addEventListener("input", draw);
+  el("rfClear").addEventListener("click",()=>{ el("rfQ").value=""; draw(); el("rfQ").focus(); });
+  draw();
+})();
+
 window.addEventListener("hashchange", route);
 renderOverview(); route();
+if(location.hash==="#rooms") document.getElementById("rooms").scrollIntoView();
 setInterval(markNow, 60000);
 </script>
 </body>
