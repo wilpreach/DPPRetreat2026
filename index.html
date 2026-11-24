@@ -37,6 +37,7 @@ button.now::after{content:" •"}
 .today .d{margin:2px 0 8px}
 .today ul{list-style:none;margin:10px 0 0;padding:8px 0 0;border-top:1px solid var(--line);text-align:left;font-size:.95rem}
 .today li{display:flex;gap:12px}.today li span:first-child{min-width:5.5em;color:var(--muted)}
+.endnav{background:var(--surface);border:1px solid var(--accent);border-radius:10px;padding:12px 14px;margin:18px 0 0;text-align:center}.endnav b{display:block;color:var(--accent);letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;margin:4px 0 8px}.endrow{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:10px}.endrow button{font-size:.85rem}.endtop{margin-top:4px;background:transparent}
 .menu{display:block;width:100%;margin:0 0 10px;font:inherit;font-size:.9rem;padding:8px 10px;border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:8px}
 .doc p{scroll-margin-top:12px}
 .doc p{white-space:pre-wrap}
@@ -46,7 +47,7 @@ h1{color:var(--accent)}
 </head>
 <body>
 <main>
-  <header class="mast"><h1>Dominican Province of the Philippines</h1><p class="mast2">Province-Wide Retreat</p><p class="mast3">November 23-28, 2026 | Alfonso Cavite</p><p class="mast4">PRAYER BOOK</p><a href="schedule.html" style="display:inline-block;margin-top:12px;font-size:.9rem;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:5px 14px;text-decoration:none">📅 Retreat Schedule</a> <a href="documents.html" style="display:inline-block;margin-top:12px;font-size:.9rem;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:5px 14px;text-decoration:none">📄 Documents</a></header>
+  <header class="mast"><h1>Dominican Province of the Philippines</h1><p class="mast2">Province-Wide Retreat</p><p class="mast3">November 23-28, 2026 | Alfonso Cavite</p><p class="mast4">PRAYER BOOK</p><a href="https://claude.ai/artifact/KWuMmRtHhJL6f8ZuyDHPC9" target="_blank" rel="noopener" style="display:inline-block;margin-top:12px;font-size:.9rem;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:5px 14px;text-decoration:none">📅 Retreat Schedule</a></header>
   <div id="todaycard"></div>
   <div class="size"><button id="fsm" aria-label="Smaller text">A−</button><button id="fsp" aria-label="Larger text">A+</button><button id="ffont" aria-label="Change font">Sans</button><button id="ftheme" aria-label="Change theme">Light</button><button id="fawake" aria-label="Keep screen awake">Keep awake</button></div>
   <div class="tabs" id="days"></div>
@@ -414,7 +415,33 @@ function renderPreces(secs,body){
   const c=document.createElement("div");c.className="card empty";
   c.textContent="Text to be added.";body.appendChild(c);
 }
-function render(){render0();renderToday();buildMenu();try{localStorage.setItem("loh-day",String(day));localStorage.setItem("loh-hour",hour)}catch(e){}}
+function renderEndNav(){
+  const body=document.getElementById("body"),hid=RETREAT[day].hide||[];
+  const top=()=>document.getElementById("hours").scrollIntoView({behavior:"smooth",block:"start"});
+  const w=document.createElement("div");w.className="endnav";
+  const t=document.createElement("b");t.textContent="Continue to";w.appendChild(t);
+  const row=document.createElement("div");row.className="endrow";
+  HOURS.filter(h=>!hid.includes(h[0])).forEach(([id,name])=>{
+    const b=document.createElement("button");b.textContent=name;
+    if(id===hour)b.className="on";
+    b.onclick=()=>{hour=id;render();top()};row.appendChild(b);
+  });
+  w.appendChild(row);
+  if(hour==="preces"){
+    const t2=document.createElement("b");t2.textContent="Other prayers";w.appendChild(t2);
+    const r2=document.createElement("div");r2.className="endrow";
+    PRAYERS.forEach(([id,names])=>{
+      const b=document.createElement("button");b.textContent=names[lang];b.style.whiteSpace="normal";
+      if(id===pItem)b.className="on";
+      b.onclick=()=>{pItem=id;render();top()};r2.appendChild(b);
+    });
+    w.appendChild(r2);
+  }
+  const up=document.createElement("button");up.textContent="↑ Back to top";up.className="endtop";
+  up.onclick=()=>window.scrollTo({top:0,behavior:"smooth"});w.appendChild(up);
+  body.appendChild(w);
+}
+function render(){render0();renderEndNav();renderToday();buildMenu();try{localStorage.setItem("loh-day",String(day));localStorage.setItem("loh-hour",hour)}catch(e){}}
 function render0(){
   const dEl=document.getElementById("days");dEl.innerHTML="";
   dates.forEach((d,i)=>{
@@ -522,5 +549,4 @@ render();
 </body>
 </html>
 
-<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
 </body></html>
