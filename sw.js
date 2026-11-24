@@ -1,7 +1,7 @@
 // Offline support for the Province-Wide Retreat 2026 site.
 // Pages are fetched fresh when online and saved; when offline, the saved copy is shown.
-const CACHE = "dpp-retreat-2026-v1";
-const PAGES = ["./", "index.html", "schedule.html", "rooms.html"];
+const CACHE = "dpp-retreat-2026-v2";
+const PAGES = ["./", "index.html", "schedule.html", "rooms.html", "documents.html", "documents.json"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(PAGES)).then(() => self.skipWaiting()));

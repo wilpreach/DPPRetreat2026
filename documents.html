@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retreat Documents</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Same look as the schedule page: dark header, sticky day tabs, cream cards. */
+:root{
+  --ink:#16130f; --paper:#faf6ee; --cream:#f3ead6; --line:#e2d7bf;
+  --muted:#6f6656; --accent:#9b1c1c; --blue:#1f4e8c; --gold:#d4af37;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+header{background:var(--ink);color:#fff;padding:30px 20px 24px;text-align:center}
+header .kicker{font-size:12px;letter-spacing:.2em;text-transform:uppercase;opacity:.7}
+header h1{font-family:"Cormorant Garamond",Georgia,serif;font-weight:500;font-size:clamp(32px,8vw,48px);line-height:1.05;margin:8px 0 10px;text-wrap:balance}
+header .meta{font-size:15px;opacity:.9}
+.hdr-btns{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:16px}
+.hdr-btns a{display:inline-block;font-weight:700;font-size:14px;text-decoration:none;border-radius:999px;padding:8px 16px;color:#fff;border:1.5px solid rgba(255,255,255,.55)}
+.hdr-btns a.gold{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.hdr-btns a:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+nav.days{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:10px 12px;scrollbar-width:none}
+nav.days::-webkit-scrollbar{display:none}
+nav.days button{flex:1 0 auto;min-width:58px;font:inherit;text-align:center;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:6px 10px;background:#fff;cursor:pointer;position:relative}
+nav.days button .w{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+nav.days button .d{display:block;font-size:20px;font-weight:700;line-height:1.1}
+nav.days button .c{display:block;font-size:10px;font-weight:700;color:var(--blue);min-height:14px}
+nav.days button .t{display:block;font-size:9px;letter-spacing:.1em;color:var(--accent);font-weight:700}
+nav.days button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+nav.days button[aria-pressed="true"] .w{color:#d8cfbd}
+nav.days button[aria-pressed="true"] .c{color:#a9c4ec}
+nav.days button[aria-pressed="true"] .t{color:#ffb4b4}
+nav.days button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+main{max-width:720px;margin:0 auto;padding:20px 16px 40px}
+.daycard{background:var(--cream);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
+.daylabel{font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+.daylabel.special{color:var(--accent)}
+.date{font-size:14px;color:var(--muted);margin-top:2px}
+.small-lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:12px}
+.who{font-family:"Cormorant Garamond",Georgia,serif;font-size:21px;font-weight:600;line-height:1.25;margin-top:2px}
+.topic{font-family:"Cormorant Garamond",Georgia,serif;font-style:italic;font-size:18px;line-height:1.35;margin-top:6px}
+
+.docs{display:grid;gap:10px}
+a.doc{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-decoration:none;color:inherit}
+a.doc:hover{border-color:var(--ink)}
+a.doc:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.ftype{flex:0 0 auto;width:46px;height:54px;border-radius:6px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:7px;font-size:11px;font-weight:700;letter-spacing:.04em;color:#fff;background:var(--muted);position:relative}
+.ftype::before{content:"";position:absolute;top:0;right:0;border-style:solid;border-width:0 12px 12px 0;border-color:transparent var(--paper) rgba(0,0,0,.18) transparent}
+.ftype.pdf{background:#b3261e}.ftype.doc{background:#1f4e8c}.ftype.ppt{background:#c4511c}.ftype.xls{background:#1e7a45}.ftype.img{background:#6b4fa0}.ftype.link{background:var(--ink)}
+.dinfo{flex:1;min-width:0}
+.dtitle{display:block;font-weight:700;line-height:1.3}
+.dsub{display:block;font-size:13px;color:var(--muted);margin-top:2px}
+.open{flex:0 0 auto;font-size:13px;font-weight:700;color:var(--accent)}
+.empty{text-align:center;color:var(--muted);background:#fff;border:1px dashed var(--line);border-radius:14px;padding:28px 16px}
+.empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:2px}
+.note{font-size:13px;color:var(--muted);margin-top:14px;text-align:center}
+footer{text-align:center;font-size:12px;color:var(--muted);padding:10px 16px 40px}
+</style>
+</head>
+<body>
+<header>
+  <div class="kicker">Province-Wide Retreat · Nov 23–28, 2026</div>
+  <h1>Retreat Documents</h1>
+  <div class="meta">Talks, handouts and slides for each day</div>
+  <div class="hdr-btns">
+    <a class="gold" href="./">🕯️ Prayer Book</a>
+    <a href="schedule.html">📅 Schedule</a>
+  </div>
+</header>
+
+<nav class="days" id="days" aria-label="Retreat days"></nav>
+
+<main>
+  <div id="day"></div>
+  <div class="docs" id="docs"></div>
+  <p class="note" id="note"></p>
+</main>
+
+<footer>Province-Wide Retreat 2026 · Saint Paul Center for Renewal, Alfonso, Cavite</footer>
+
+<script>
+const DAYS = [
+  {n:23, wd:"Monday",    label:"Opening Day", special:true, who:"Abbot Dom Austin P. Cadiz, OSB", topic:"Contemplari et Contemplata Aliis Tradere: The Contemplative Foundation of Synodal Spirituality"},
+  {n:24, wd:"Tuesday",   label:"Second Day",  who:"Archbishop Gilbert A. Garcera, DD", topic:"“Cura Animarum” in a Synodal Church: Pastoring with and for the People"},
+  {n:25, wd:"Wednesday", label:"Third Day",   who:"Bishop Marcelino M. Maralit Jr., DD", topic:"The Pulpit and the Pew: The Preacher as the Soul of Synodal Listening"},
+  {n:26, wd:"Thursday",  label:"Fourth Day",  who:"Br. Marcelino E. Saria, OP and Br. Paul Raegan O. Talavera, OP", topic:"The Synodal Dominican in the World: Concrete Commitments for Mission"},
+  {n:27, wd:"Friday",    label:"Fifth Day",   who:"Archbishop Midyphil B. Billones, DD", topic:"Veritas in a Synodal Key: The Church’s Intellectual Tradition as a Service to Discernment"},
+  {n:28, wd:"Saturday",  label:"Closing Day", special:true, who:"", topic:"Group Discussion and Closing Mass"}
+];
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let DOCS = {};
+let cur = null;
+let loadErr = false;
+
+function manilaDay(){
+  const p = new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Manila",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
+  const g = k => +p.find(x=>x.type===k).value;
+  return (g("year")===2026 && g("month")===11 && g("day")>=23 && g("day")<=28) ? g("day") : null;
+}
+
+function kind(d){
+  const f = (d.file || d.url || "").toLowerCase().split("?")[0];
+  if (/\.pdf$/.test(f)) return ["pdf","PDF"];
+  if (/\.(docx?|odt|rtf)$/.test(f)) return ["doc","DOC"];
+  if (/\.(pptx?|key|odp)$/.test(f)) return ["ppt","PPT"];
+  if (/\.(xlsx?|csv)$/.test(f)) return ["xls","XLS"];
+  if (/\.(jpe?g|png|gif|webp|heic)$/.test(f)) return ["img","IMG"];
+  return d.url ? ["link","LINK"] : ["", "FILE"];
+}
+
+function renderTabs(){
+  const today = manilaDay();
+  $("days").innerHTML = DAYS.map(d => {
+    const n = (DOCS[d.n] || []).length;
+    return `<button type="button" data-n="${d.n}" aria-pressed="${d.n===cur}">
+      <span class="w">${d.wd.slice(0,3)}</span><span class="d">${d.n}</span>
+      <span class="c">${n ? n + (n===1?" file":" files") : ""}</span>${d.n===today?'<span class="t">TODAY</span>':''}</button>`;
+  }).join("");
+  $("days").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    cur = +b.dataset.n; history.replaceState(null, "", "#day-" + cur); render();
+  }));
+  const a = $("days").querySelector('[aria-pressed="true"]');
+  if (a) a.scrollIntoView({inline:"center", block:"nearest"});
+}
+
+function render(){
+  renderTabs();
+  const d = DAYS.find(x => x.n === cur);
+  $("day").innerHTML = `<div class="daycard">
+    <div class="daylabel${d.special?' special':''}">${d.label}</div>
+    <div class="date">${d.wd}, November ${d.n}, 2026</div>
+    ${d.who ? `<div class="small-lbl">Resource Speaker${d.who.includes(" and ")?"s":""}</div><div class="who">${esc(d.who)}</div>` : ""}
+    <div class="topic">${esc(d.topic)}</div></div>`;
+  const list = DOCS[d.n] || [];
+  $("docs").innerHTML = list.length ? list.map(x => {
+    const [cls, lbl] = kind(x);
+    const href = x.file ? encodeURI(x.file) : x.url;
+    const sub = [x.by, x.note].filter(Boolean).map(esc).join(" · ");
+    return `<a class="doc" href="${esc(href)}" target="_blank" rel="noopener">
+      <span class="ftype ${cls}">${lbl}</span>
+      <span class="dinfo"><span class="dtitle">${esc(x.title || x.file || x.url)}</span>${sub?`<span class="dsub">${sub}</span>`:""}</span>
+      <span class="open">Open →</span></a>`;
+  }).join("") : `<div class="empty"><b>No documents yet for ${d.wd}</b>They will appear here once they are uploaded.</div>`;
+  $("note").textContent = loadErr ? "Couldn’t load the document list. Check your connection and reload." : (list.length ? "Open a document once while online to keep it on your phone for offline reading." : "");
+}
+
+function start(){
+  const m = location.hash.match(/^#day-(2[3-8])$/);
+  cur = m ? +m[1] : (manilaDay() || 23);
+  render();
+}
+
+fetch("documents.json", {cache:"no-cache"})
+  .then(r => r.ok ? r.json() : {})
+  .then(j => { DOCS = j || {}; })
+  .catch(() => { loadErr = true; })
+  .finally(start);
+window.addEventListener("hashchange", start);
+</script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script>
+</body>
+</html>
