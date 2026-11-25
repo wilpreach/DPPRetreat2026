@@ -339,39 +339,50 @@ const EXPO={"doc":[{"l":[[["RITE OF EXPOSITION AND BENEDICTION","rb"]]],"a":1,"s
   const pause={sb:6,l:[[["Pause for silent prayer.","ri"]]]};
   const LA=(a,b)=>({sb:8,l:[[["L1: "+a,"b"]],[["L2. ","ri"],[b,""]]]});
   const E={l:[]};
+  const T=(t,sb)=>({sb:sb||10,l:[[[t,""]]]});
+  const PET=(resp,...pets)=>pets.map((t,i)=>({sb:i?10:12,l:[[[t,""]],[["R. ","r"],[resp,"b"]]]}));
+  const SET=(ldr,resp,...pets)=>[
+    {sb:22,l:[[[ldr+":  ","r"],["Let our response be:",""]]]},
+    {a:1,sb:6,l:[[[resp,"rb"]]]},
+    ...PET(resp,...pets)];
+  const PAUSE={a:1,sb:14,l:[[["— Pause for silent prayer —","ri"]]]};
+  const VR=(a,b)=>({sb:12,l:[[["L1:  ","r"],[a,""]],[["L2:  ","r"],[b,"b"]]]});
   W.hours.creative={doc:[
     {a:1,l:[[["CREATIVE LITURGY","rb"]]]},
     {a:1,l:[[["Red Wednesday","ri"]]]},
     H("INTRODUCTION"),
-    {sb:6,l:[[["Before we begin our Rosary, let us first light our candles as a sign of Christ’s light shining in the darkness. As these flames burn, let us remember our brothers and sisters in faith who suffer persecution, oppression, and discrimination because they follow Jesus Christ. As we meditate on the Glorious Mysteries, we are reminded that Christ’s suffering ended in victory, that death gave way to resurrection, and that darkness can never overcome the light of God. May these mysteries strengthen persecuted Christians with hope, remind them that the risen Lord walks with them in their trials, and assure them that faithful perseverance will share in the glory of Christ. Together, let us offer this Rosary for persecuted Christians throughout the world.","b"]]]},
+    T("Before we begin our Rosary, let us first light our candles as a sign of Christ’s light shining in the darkness.",8),
+    T("As these flames burn, let us remember our brothers and sisters in faith who suffer persecution, oppression, and discrimination because they follow Jesus Christ."),
+    T("As we meditate on the Glorious Mysteries, we are reminded that Christ’s suffering ended in victory, that death gave way to resurrection, and that darkness can never overcome the light of God."),
+    T("May these mysteries strengthen persecuted Christians with hope, remind them that the risen Lord walks with them in their trials, and assure them that faithful perseverance will share in the glory of Christ."),
+    {sb:10,l:[[["Together, let us offer this Rosary for persecuted Christians throughout the world.","b"]]]},
     H("OPENING HYMN"),
     {l:[[["Christ, Be Our Light","i"]],[["Sung by the Coristas","ri"]]]},
     H("THE DOMINICAN ROSARY"),
-    {sb:6,l:[[["Leader 1: ","r"],["Fr. Junel (L1)",""]],[["Leader 2: ","r"],["Fr. Ramiro (L2)",""]]]},
-    {sb:10,l:[[["The Five Glorious Mysteries","b"]],[["1. The Resurrection",""]],[["2. The Ascension",""]],[["3. The Descent of the Holy Spirit",""]],[["4. The Assumption of the Blessed Virgin Mary",""]],[["5. The Coronation of the Blessed Virgin Mary",""]]]},
+    {sb:6,l:[[["Leader 1 (L1):  ","r"],["Fr. Junel",""]],[["Leader 2 (L2):  ","r"],["Fr. Ramiro",""]]]},
+    {sb:12,l:[[["The Five Glorious Mysteries","b"]],[["1.  The Resurrection",""]],[["2.  The Ascension",""]],[["3.  The Descent of the Holy Spirit",""]],[["4.  The Assumption of the Blessed Virgin Mary",""]],[["5.  The Coronation of the Blessed Virgin Mary",""]]]},
     {m:"rosary-link",l:[]},
     H("LITANY OF SUPPLICATIONS"),
     {l:[[["from the prayer of Pope Francis","ri"]]]},
-    S(["1","Save us, O Lord."]),
-    P(R("From every evil that afflicts humanity,"),R("From hunger, famine, and self-centeredness,"),R("From sickness, epidemics, and fear of our fellowmen,"),R("From devastating follies, from ruthless interests, and violence,"),R("From deception, false information, and manipulation of consciences,")),
-    pause,
-    S(["2","Comfort us, O Lord."]),
-    P(R("Protect your Church, as she crosses the desert,"),R("Protect humanity, terrified with fear and anguish,"),R("Protect the sick and the dying, oppressed by loneliness,"),R("Protect the doctors and health care providers, exhausted by fatigue,"),R("Protect the politicians and civil leaders, who bear the weight of making decisions,")),
-    pause,
-    S(["1","Grant us your Spirit, O Lord."]),
-    P(R("In the hour of trial and confusion,"),R("In temptation and our weakness,"),R("In the battle against evil and sin,"),R("In the search for what is truly good and true joy,"),R("In the decision to remain in You and in Your friendship,")),
-    pause,
-    S(["2","Open us to hope, O Lord."]),
-    P(R("Should sin oppress us,"),R("Should hatred close our hearts,"),R("Should sorrow visit us,"),R("Should indifference cause us anguish,"),R("Should death overwhelm us,")),
-    LA("Lamb of God, who takes away the sins of the world,","Spare us, O Lord."),
-    LA("Lamb of God, who takes away the sins of the world,","Graciously hear us, O Lord."),
-    LA("Lamb of God, who takes away the sins of the world,","Have mercy on us."),
-    LA("Pray for us, O Holy Mother of God.","That we may be made worthy of the promises of Christ."),
-    {sb:8,l:[[["L1: ","b"],["Let us pray:","b"]]]},
-    {sb:6,l:[[["O God, whose only begotten Son, by His life, death, and resurrection, has purchased for us the rewards of eternal life, grant, we beseech Thee, that by meditating upon these mysteries of the most holy Rosary of the Blessed Virgin Mary, we may imitate what they contain and obtain what they promise, through the same Christ our Lord. ","b"],["Amen.","b"]]]},
+    {sb:8,l:[[["The leader reads each petition; all answer with the response in bold.","i"]]]},
+    ...SET("L1","Save us, O Lord.","From every evil that afflicts humanity,","From hunger, famine, and self-centeredness,","From sickness, epidemics, and fear of our fellowmen,","From devastating follies, from ruthless interests, and violence,","From deception, false information, and manipulation of consciences,"),
+    PAUSE,
+    ...SET("L2","Comfort us, O Lord.","Protect your Church, as she crosses the desert,","Protect humanity, terrified with fear and anguish,","Protect the sick and the dying, oppressed by loneliness,","Protect the doctors and health care providers, exhausted by fatigue,","Protect the politicians and civil leaders, who bear the weight of making decisions,"),
+    PAUSE,
+    ...SET("L1","Grant us your Spirit, O Lord.","In the hour of trial and confusion,","In temptation and our weakness,","In the battle against evil and sin,","In the search for what is truly good and true joy,","In the decision to remain in You and in Your friendship,"),
+    PAUSE,
+    ...SET("L2","Open us to hope, O Lord.","Should sin oppress us,","Should hatred close our hearts,","Should sorrow visit us,","Should indifference cause us anguish,","Should death overwhelm us,"),
+    {sb:22,l:[[["Lamb of God","r"]]]},
+    VR("Lamb of God, who takes away the sins of the world,","Spare us, O Lord."),
+    VR("Lamb of God, who takes away the sins of the world,","Graciously hear us, O Lord."),
+    VR("Lamb of God, who takes away the sins of the world,","Have mercy on us."),
+    VR("Pray for us, O Holy Mother of God.","That we may be made worthy of the promises of Christ."),
+    H("CONCLUDING PRAYER"),
+    {sb:6,l:[[["L1:  ","r"],["Let us pray.",""]]]},
+    {sb:10,l:[["O God, whose only begotten Son,"],["by His life, death, and resurrection,"],["has purchased for us the rewards of eternal life,"],["grant, we beseech Thee,"],["that by meditating upon these mysteries"],["of the most holy Rosary of the Blessed Virgin Mary,"],["we may imitate what they contain"],["and obtain what they promise,"],["through the same Christ our Lord."]].map(x=>[[x[0],""]]).concat([[["All:  ","r"],["Amen.","b"]]])},
     H("CLOSING HYMN"),
     {l:[[["Pananagutan","i"]],[["Sung by the Coristas","ri"]]]},
-    {sb:14,l:[[["L1: ","r"],["In the name of the Father, and of the Son, and of the Holy Spirit. ",""],["Amen.","b"]]]},
+    {sb:22,l:[[["L1:  ","r"],["In the name of the Father,",""]],[["and of the Son, and of the Holy Spirit.",""]],[["All:  ","r"],["Amen.","b"]]]},
     E]};
   W.hide=(W.hide||[]).concat("vespers");
 })();
